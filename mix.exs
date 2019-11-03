@@ -7,7 +7,8 @@ defmodule Agora.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -22,8 +23,15 @@ defmodule Agora.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:nanoid, "2.0.2"}
     ]
   end
+
+  defp aliases do
+    [
+      "db.clean": &db_clean/1
+    ]
+  end
+
+  defp db_clean(_), do: System.cmd("rm", ["-r", "priv/db/#{Mix.env()}.mnesia"])
 end

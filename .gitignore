@@ -22,3 +22,8 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 agora-*.tar
 
+priv/db
+
+.elixir_ls
+
+.mix_tasks

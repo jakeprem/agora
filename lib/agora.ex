@@ -3,16 +3,8 @@ defmodule Agora do
   Documentation for Agora.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Agora.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def initialize_app do
+    Agora.UserService.init()
+    Agora.MarketService.init()
   end
 end

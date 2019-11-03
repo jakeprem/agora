@@ -1,0 +1,3 @@
+%{
+  "nanoid": {:hex, :nanoid, "2.0.2", "f3f7b4bf103ab6667f22beb00b6315825ee3f30100dd2c93d534e5c02164e857", [:mix], [], "hexpm"},
+}
