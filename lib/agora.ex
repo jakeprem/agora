@@ -4,7 +4,8 @@ defmodule Agora do
   """
 
   def initialize_app do
-    Agora.UserService.init()
-    Agora.MarketService.init()
+    Agora.AccountRepo.init()
+    Agora.TransactionRepo.init()
+    Agora.WidgetRepo.init()
   end
 end
