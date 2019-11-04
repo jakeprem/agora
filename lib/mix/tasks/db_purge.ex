@@ -1,7 +1,9 @@
 defmodule Mix.Tasks.Db.Purge do
+  @moduledoc """
+  Deletes the database and all database files for the current environment
+  """
   use Mix.Task
 
-  @shortdoc "Sets up the database and tables"
   def run(_) do
     Agora.Setup.purge()
   end

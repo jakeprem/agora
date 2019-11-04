@@ -12,6 +12,9 @@ defmodule Agora.MarketService do
   alias Agora.TransactionRepo
   alias Agora.WidgetRepo
 
+  @doc """
+  Post a widget for sale
+  """
   def sell_widget(seller_id, name, description, price) when is_number(price) do
     widget = Widget.new(seller_id, name, description, true, price)
 
@@ -24,6 +27,9 @@ defmodule Agora.MarketService do
     end
   end
 
+  @doc """
+  Buy a widget. Will return an error if buyer doesn't have sufficient funds.
+  """
   def buy_widget(buyer_id, widget_id) do
     :mnesia.transaction(fn ->
       buyer = AccountRepo.read(buyer_id)
@@ -59,6 +65,9 @@ defmodule Agora.MarketService do
     end
   end
 
+  @doc """
+  List widgets for sale
+  """
   def list_widgets do
     :mnesia.transaction(fn ->
       WidgetRepo.list()

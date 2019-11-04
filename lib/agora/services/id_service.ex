@@ -8,7 +8,11 @@ defmodule Agora.IdService do
   """
   @alphabet "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
+  @doc """
+  Generates an id
+  """
+  @spec generate_id() :: String.t()
   def generate_id do
-    Nanoid.generate(12, @alphabet)
+    Nanoid.generate(8, @alphabet)
   end
 end

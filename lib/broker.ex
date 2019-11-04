@@ -1,4 +1,10 @@
 defmodule Agora.Broker do
+  @moduledoc """
+  An IEx user interface for interacting with the application. All user actions are exposed on this module.
+
+  Right now all functionality is provided using defdelegate however this could be a place to build
+  """
+
   alias Agora.AccountService
   alias Agora.MarketService
 

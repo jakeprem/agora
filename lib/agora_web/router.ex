@@ -1,4 +1,7 @@
 defmodule AgoraWeb.Router do
+  @moduledoc """
+  Provides an HTTP API as an interface to the application.
+  """
   use Plug.Router
 
   plug(Plug.Parsers,

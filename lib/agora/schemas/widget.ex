@@ -1,4 +1,7 @@
 defmodule Agora.Schemas.Widget do
+  @moduledoc """
+  Struct for representing transactions in the system.
+  """
   @attributes [:id, :owner, :name, :description, :is_for_sale, :price]
 
   @derive Jason.Encoder
@@ -6,8 +9,17 @@ defmodule Agora.Schemas.Widget do
 
   alias Agora.IdService
 
+  @doc """
+  Make the attributes list available.
+
+  Currently used to create the Mnesia table
+  """
   def attributes, do: @attributes
 
+  @doc """
+  Creates a new Widget struct. Can be persisted with `Agora.WidgetRepo`.
+  """
+  @spec new(String.t(), String.t(), String.t(), bool, number) :: Agora.Schemas.Widget.t()
   def new(owner, name, description, is_for_sale, price) do
     %__MODULE__{
       id: IdService.generate_id(),
@@ -19,6 +31,13 @@ defmodule Agora.Schemas.Widget do
     }
   end
 
+  @doc """
+  Converts a `Agora.Schemas.Widget` to a record to be inserted into :mnesia.
+
+  This should only need to be used in `Agora.WidgetRepo`
+  """
+  @spec to_record(Agora.Schemas.Widget.t()) ::
+          {Agora.Schemas.Widget, any, any, any, any, any, any}
   def to_record(%__MODULE__{} = schema) do
     {
       __MODULE__,
@@ -31,6 +50,13 @@ defmodule Agora.Schemas.Widget do
     }
   end
 
+  @doc """
+  Converts a Widget record to a `Agora.Schemas.Widget` to be used by the rest of the app.
+
+  This should only need to be used in `Agora.WidgetRepo`
+  """
+  @spec from_record({Agora.Schemas.Widget, any, any, any, any, any, any}) ::
+          Agora.Schemas.Widget.t()
   def from_record({__MODULE__, id, owner, name, description, is_for_sale, price}) do
     %__MODULE__{
       id: id,
