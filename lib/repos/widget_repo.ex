@@ -6,9 +6,9 @@ defmodule Agora.WidgetRepo do
 
   def init do
     case :mnesia.create_table(@tablename,
-      attributes: @attributes,
-      disc_copies: [node()]
-    ) do
+           attributes: @attributes,
+           disc_copies: [node()]
+         ) do
       {:atomic, :ok} ->
         :ok
 

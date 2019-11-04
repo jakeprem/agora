@@ -18,7 +18,7 @@ defmodule Agora.Schemas.Widget do
     }
   end
 
-  def to_record(%__MODULE__{} = schema ) do
+  def to_record(%__MODULE__{} = schema) do
     {
       __MODULE__,
       schema.id,

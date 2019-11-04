@@ -3,9 +3,11 @@ defmodule Agora.MarketServiceTest do
 
   alias Agora.AccountRepo
   alias Agora.WidgetRepo
+  alias Agora.TransactionRepo
 
   alias Agora.Schemas.{
     Account,
+    Transaction,
     Widget
   }
 
@@ -14,12 +16,15 @@ defmodule Agora.MarketServiceTest do
 
   setup_all do
     AccountRepo.init()
+    TransactionRepo.init()
     WidgetRepo.init()
 
     :ok
   end
 
   setup do
+    :mnesia.clear_table(Account)
+    :mnesia.clear_table(Transaction)
     :mnesia.clear_table(Widget)
 
     :ok
@@ -48,9 +53,10 @@ defmodule Agora.MarketServiceTest do
 
     AccountService.add_funds(user_b, 100.00)
 
-    {:ok, %Widget{id: widget_id}} = MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 100.0)
+    {:ok, %Widget{id: widget_id}} =
+      MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 100.0)
 
-    MarketService.buy_widget(user_b, widget_id)
+    {:ok, %Transaction{widget_id: ^widget_id, buyer_id: user_b, seller_id: user_a}} = MarketService.buy_widget(user_b, widget_id)
 
     assert {:ok, %Account{balance: 95.0}} = AccountService.get(user_a)
     assert {:ok, %Account{balance: 0.0}} = AccountService.get(user_b)
@@ -62,7 +68,8 @@ defmodule Agora.MarketServiceTest do
 
     AccountService.add_funds(user_b, 100.00)
 
-    {:ok, %Widget{id: widget_id}} = MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 1000.0)
+    {:ok, %Widget{id: widget_id}} =
+      MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 1000.0)
 
     assert {:error, reason} = MarketService.buy_widget(user_b, widget_id)
     assert reason =~ "Insufficient funds"

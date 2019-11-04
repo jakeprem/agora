@@ -5,9 +5,11 @@ defmodule Agora.MarketService do
   @platform_cut 0.05
 
   alias Agora.Schemas.Account
+  alias Agora.Schemas.Transaction
   alias Agora.Schemas.Widget
 
   alias Agora.AccountRepo
+  alias Agora.TransactionRepo
   alias Agora.WidgetRepo
 
   def sell_widget(seller_id, name, description, price) when is_number(price) do
@@ -26,11 +28,11 @@ defmodule Agora.MarketService do
     :mnesia.transaction(fn ->
       buyer = AccountRepo.read(buyer_id)
       widget = WidgetRepo.read(widget_id)
-      seller  = AccountRepo.read(widget.owner)
+      seller = AccountRepo.read(widget.owner)
 
       updated_buyer = %Account{
-        buyer |
-        balance: buyer.balance - widget.price
+        buyer
+        | balance: buyer.balance - widget.price
       }
 
       if updated_buyer.balance < 0 do
@@ -38,15 +40,21 @@ defmodule Agora.MarketService do
       end
 
       updated_seller = %Account{
-        seller |
-        balance: seller.balance + (widget.price * (1-@platform_cut))
+        seller
+        | balance: seller.balance + widget.price * (1 - @platform_cut)
       }
 
       AccountRepo.write(updated_buyer)
       AccountRepo.write(updated_seller)
+
+      new_transaction = Transaction.new(buyer.id, seller.id, widget.id)
+
+      with :ok <- TransactionRepo.write(new_transaction) do
+        new_transaction
+      end
     end)
     |> case do
-      {:atomic, :ok} -> {:ok, widget_id}
+      {:atomic, transaction} -> {:ok, transaction}
       {:aborted, reason} -> {:error, reason}
     end
   end

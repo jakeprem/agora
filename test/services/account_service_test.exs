@@ -27,7 +27,6 @@ defmodule Agora.AccountServiceTest do
   end
 
   describe "Can add funds to account" do
-
     test "new balance = old balance + added amount" do
       {:ok, account} = AccountService.create("Jake", "Prem")
       assert %Account{balance: 0.0} = account

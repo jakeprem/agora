@@ -9,7 +9,6 @@ defmodule Agora.Broker do
     :not_implemented
   end
 
-
   def buy_widget(account_id, widget_id) do
     :not_implemented
   end
