@@ -4,7 +4,9 @@ defmodule Agora.Application do
   use Application
 
   def start(_type, _args) do
-    children = []
+    children = [
+      {Plug.Cowboy, scheme: :http, plug: AgoraWeb.Router, options: [port: 4000]}
+    ]
 
     start_mnesia()
 
@@ -13,12 +15,7 @@ defmodule Agora.Application do
   end
 
   defp start_mnesia do
-    current_node = node()
-
-    case :mnesia.create_schema([current_node]) do
-      :ok -> :mnesia.start()
-      {:error, {^current_node, {:already_exists, ^current_node}}} -> :mnesia.start()
-      _ -> raise "Something unexpected happened while starting Mnesia"
-    end
+    Agora.Setup.create_schema_and_start()
+    Agora.Setup.wait_for_tables()
   end
 end

@@ -1,6 +1,7 @@
 defmodule Agora.Schemas.Transaction do
   @attributes [:id, :buyer_id, :seller_id, :widget_id]
 
+  @derive Jason.Encoder
   defstruct @attributes
 
   alias Agora.IdService

@@ -20,7 +20,7 @@ defmodule Agora.MarketService do
     end)
     |> case do
       {:atomic, :ok} -> {:ok, widget}
-      other -> {:error, other}
+      {:aborted, reason} -> {:error, reason}
     end
   end
 
@@ -65,7 +65,7 @@ defmodule Agora.MarketService do
     end)
     |> case do
       {:atomic, widgets} -> {:ok, widgets}
-      other -> {:error, other}
+      {:aborted, reason} -> {:error, reason}
     end
   end
 end

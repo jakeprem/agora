@@ -1,6 +1,7 @@
 defmodule Agora.Schemas.Widget do
   @attributes [:id, :owner, :name, :description, :is_for_sale, :price]
 
+  @derive Jason.Encoder
   defstruct @attributes
 
   alias Agora.IdService

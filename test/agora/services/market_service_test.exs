@@ -1,10 +1,6 @@
 defmodule Agora.MarketServiceTest do
   use ExUnit.Case
 
-  alias Agora.AccountRepo
-  alias Agora.WidgetRepo
-  alias Agora.TransactionRepo
-
   alias Agora.Schemas.{
     Account,
     Transaction,
@@ -15,17 +11,13 @@ defmodule Agora.MarketServiceTest do
   alias Agora.AccountService
 
   setup_all do
-    AccountRepo.init()
-    TransactionRepo.init()
-    WidgetRepo.init()
+    Agora.Setup.setup()
 
     :ok
   end
 
   setup do
-    :mnesia.clear_table(Account)
-    :mnesia.clear_table(Transaction)
-    :mnesia.clear_table(Widget)
+    Agora.Setup.clear_tables()
 
     :ok
   end
@@ -56,7 +48,8 @@ defmodule Agora.MarketServiceTest do
     {:ok, %Widget{id: widget_id}} =
       MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 100.0)
 
-    {:ok, %Transaction{widget_id: ^widget_id, buyer_id: user_b, seller_id: user_a}} = MarketService.buy_widget(user_b, widget_id)
+    {:ok, %Transaction{widget_id: ^widget_id, buyer_id: user_b, seller_id: user_a}} =
+      MarketService.buy_widget(user_b, widget_id)
 
     assert {:ok, %Account{balance: 95.0}} = AccountService.get(user_a)
     assert {:ok, %Account{balance: 0.0}} = AccountService.get(user_b)

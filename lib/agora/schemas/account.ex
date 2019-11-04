@@ -1,6 +1,7 @@
 defmodule Agora.Schemas.Account do
   @attributes [:id, :first_name, :last_name, :balance]
 
+  @derive Jason.Encoder
   defstruct @attributes
 
   alias Agora.IdService

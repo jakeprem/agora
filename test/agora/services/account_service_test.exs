@@ -5,12 +5,13 @@ defmodule Agora.AccountServiceTest do
   alias Agora.AccountService
 
   setup_all do
-    Agora.AccountRepo.init()
+    Agora.Setup.create_schema_and_start()
+
     :ok
   end
 
   setup do
-    :mnesia.clear_table(:account)
+    Agora.Setup.clear_tables()
 
     :ok
   end

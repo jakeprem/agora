@@ -23,7 +23,10 @@ defmodule Agora.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nanoid, "2.0.2"}
+      {:jason, "1.1.2"},
+      {:nanoid, "2.0.2"},
+      {:plug, "~> 1.8"},
+      {:plug_cowboy, "~> 2.1"}
     ]
   end
 
