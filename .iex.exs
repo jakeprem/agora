@@ -1,2 +1,2 @@
-alias Agora.UserService
+alias Agora.AccountService
 alias Agora.MarketService

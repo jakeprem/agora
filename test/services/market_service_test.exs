@@ -1,26 +1,35 @@
 defmodule Agora.MarketServiceTest do
   use ExUnit.Case
 
+  alias Agora.AccountRepo
+  alias Agora.WidgetRepo
+
+  alias Agora.Schemas.{
+    Account,
+    Widget
+  }
+
   alias Agora.MarketService
-  alias Agora.UserService
+  alias Agora.AccountService
 
   setup_all do
-    MarketService.init()
+    AccountRepo.init()
+    WidgetRepo.init()
 
     :ok
   end
 
   setup do
-    :mnesia.clear_table(MarketItem)
+    :mnesia.clear_table(Widget)
 
     :ok
   end
 
   test "User can add widgets" do
-    {:ok, {User, user_id, _, _}} = UserService.create("Jack", "Ryan")
+    {:ok, %Account{id: account_id}} = AccountService.create("Jack", "Ryan")
 
     assert {:ok, listing} =
-             MarketService.sell_widget(user_id, "A Rock", "It's a really cool rock.", 10.00)
+             MarketService.sell_widget(account_id, "A Rock", "It's a really cool rock.", 10.00)
   end
 
   test "User can list widgets for sale" do
@@ -33,5 +42,32 @@ defmodule Agora.MarketServiceTest do
     assert Enum.member?(widgets, widget_b)
   end
 
-  test "User can buy widgets"
+  test "User can buy widgets" do
+    {:ok, %Account{id: user_a}} = AccountService.create("Michael", "Scott")
+    {:ok, %Account{id: user_b}} = AccountService.create("Dwight", "Schrute")
+
+    AccountService.add_funds(user_b, 100.00)
+
+    {:ok, %Widget{id: widget_id}} = MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 100.0)
+
+    MarketService.buy_widget(user_b, widget_id)
+
+    assert {:ok, %Account{balance: 95.0}} = AccountService.get(user_a)
+    assert {:ok, %Account{balance: 0.0}} = AccountService.get(user_b)
+  end
+
+  test "User cannot buy widget with insufficient funds" do
+    {:ok, %Account{id: user_a}} = AccountService.create("Michael", "Scott")
+    {:ok, %Account{id: user_b}} = AccountService.create("Dwight", "Schrute")
+
+    AccountService.add_funds(user_b, 100.00)
+
+    {:ok, %Widget{id: widget_id}} = MarketService.sell_widget(user_a, "Some Paper", "High quality paper", 1000.0)
+
+    assert {:error, reason} = MarketService.buy_widget(user_b, widget_id)
+    assert reason =~ "Insufficient funds"
+
+    assert {:ok, %Account{balance: 0.0}} = AccountService.get(user_a)
+    assert {:ok, %Account{balance: 100.0}} = AccountService.get(user_b)
+  end
 end

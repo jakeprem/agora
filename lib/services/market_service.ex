@@ -1,48 +1,59 @@
 defmodule Agora.MarketService do
   @moduledoc """
-
+  Service for listing and buying widgets
   """
+  @platform_cut 0.05
 
-  alias Agora.IdService
+  alias Agora.Schemas.Account
+  alias Agora.Schemas.Widget
 
-  @tablename MarketItem
-  @attributes [:id, :seller, :name, :description, :price]
+  alias Agora.AccountRepo
+  alias Agora.WidgetRepo
 
-  def init do
-    case :mnesia.create_table(MarketItem, attributes: @attributes, disc_copies: [node()]) do
-      {:atomic, :ok} ->
-        :ok
+  def sell_widget(seller_id, name, description, price) when is_number(price) do
+    widget = Widget.new(seller_id, name, description, true, price)
 
-      {:aborted, {:already_exists, MarketItem}} ->
-        {:ok, "MarketItem table already created"}
-
-      {:aborted, reason} ->
-        {:error, reason}
+    :mnesia.transaction(fn ->
+      WidgetRepo.write(widget)
+    end)
+    |> case do
+      {:atomic, :ok} -> {:ok, widget}
+      other -> {:error, other}
     end
   end
 
-  def sell_widget(seller, name, description, price) when is_number(price) do
-    new_listing = {
-      @tablename,
-      IdService.generate_id(),
-      seller,
-      name,
-      description,
-      price
-    }
-
+  def buy_widget(buyer_id, widget_id) do
     :mnesia.transaction(fn ->
-      :mnesia.write(new_listing)
+      buyer = AccountRepo.read(buyer_id)
+      widget = WidgetRepo.read(widget_id)
+      seller  = AccountRepo.read(widget.owner)
+
+      updated_buyer = %Account{
+        buyer |
+        balance: buyer.balance - widget.price
+      }
+
+      if updated_buyer.balance < 0 do
+        :mnesia.abort("Insufficient funds. Add more funds before purchasing this widget.")
+      end
+
+      updated_seller = %Account{
+        seller |
+        balance: seller.balance + (widget.price * (1-@platform_cut))
+      }
+
+      AccountRepo.write(updated_buyer)
+      AccountRepo.write(updated_seller)
     end)
     |> case do
-      {:atomic, :ok} -> {:ok, new_listing}
-      other -> {:error, other}
+      {:atomic, :ok} -> {:ok, widget_id}
+      {:aborted, reason} -> {:error, reason}
     end
   end
 
   def list_widgets do
     :mnesia.transaction(fn ->
-      :mnesia.match_object({@tablename, :_, :_, :_, :_, :_})
+      WidgetRepo.list()
     end)
     |> case do
       {:atomic, widgets} -> {:ok, widgets}
