@@ -4,7 +4,8 @@
   - The web layer I added is very bare bones. It does not distinguish between request errors and server errors, it always renders either a success or a 400/500 with the error message. I mainly added it so that there would be an interface to the application that does not require using Elixir/IEx
   - I interpreted the stated requirement "If a buyer's account has a balance of $0 they cannot purchase..." to mean that they cannot complete a transaction where their balance would end up below $0.
   - I represented currency as floats by setting all account balances to `0.0` initially. I'm then relying on Elixir to coerce any integers to floats when they are added with the account balance. A more complete solution here would be to use a currency library or to represent money as a tuple of the type `{Dollars<Int>, Cents<Int>}`
-  - The transaction in `MarketService.buy_widget/2` got pretty long. It has logic that should probably be extracted.
+  - The platform cut when a user buys a widget currently does not get added to any account or tracked
+  - The transaction in `MarketService.buy_widget/2` got pretty long. It has logic that should probably be extracted to separate functions or modules.
 
 ## Design Decisions
 I ended up writing the app as a 3-tier architecture. All of the dependencies go in a single direction, i.e. the interface layer is coupled to the service layer, the service layer is not coupled to the interface layer.
@@ -14,7 +15,7 @@ I ended up writing the app as a 3-tier architecture. All of the dependencies go 
 ### Interface Layer
 Map requests from the user to business functions/use cases.
 #### Broker
-The broker module is aggregating all of the supported business functions under a single module. Right now it's only doing `defdelegate` to the services, so it's main value is to expose a single interface to all of the supported use cases (Create Account, Sell Widget, Buy Widget, etc). 
+The broker module is aggregating all of the supported business functions under a single module. Right now it's only doing `defdelegate` to the services, so its main value is to expose a single interface to all of the supported use cases (Create Account, Sell Widget, Buy Widget, etc). 
 #### Plug API
 The Plug API provides a way for users to interact with the app over HTTP. I left it pretty bare bones since it wasn't a strict requirement, but it currently maps JSON user requests to the appropriate use cases in the service layer. It provides very basic error handling. The API could be upgraded with better error messages and input validation. (For example if a field is missing from the payload it currently causes a match error and simply returns a 500. This would be improved by responding with a 400 and which field was missing).
 
@@ -23,13 +24,13 @@ It should work fine and handle invalid inputs appropriately, just not always wit
 ### Service Layer
 The service layer is where the required use cases (called out as Core Functions in the requirements) are implemented. This layer knows a little bit about Mnesia in order to compose transactions and map Mnesia return values to standard `:ok`/`:error` tuples. Since Mnesia does not have built in support for Foreign Keys, this is also where I'm validating that accounts and widgets exist before finishing the transaction. Since all data is held in memory in addition to the disk, it is cheap to do multiple reads within the transaction (e.g. `MarketService.buy_widget/2` does 3 reads and 4 writes).
 
-The service layer takes inputs, composes actions from the Repo layer to execute transactions, then maps the result to an `:ok` or `:error` tuple. They are somewhat analogous to Phoenix's idea of [contexts](https://hexdocs.pm/phoenix/contexts.html).
+The service layer takes inputs, composes actions from the Repo layer to execute transactions, then maps the result to an `:ok` or `:error` tuple. The services are somewhat analogous to Phoenix's idea of [contexts](https://hexdocs.pm/phoenix/contexts.html).
 
 
 ### Data Access Layer (Repos)
 The data access layer handles mapping data from the rest of the system and writing it to the database.
 
-Mnesia uses tuples in the form of Erlang records for data representation. Since working with and updating tuples in Elixir can be difficult, this layer is responsible for mapping the Mnesia records to and from the database. It also abstracts the service layer from needing to execute specific Mnesia operations other than `:mnesia.transaction`.
+Mnesia uses tuples in the form of Erlang records for data representation. Since working with and updating tuples in Elixir can be tedious, this layer is responsible for mapping the Mnesia records to structs and vice versa. It also abstracts the service layer from needing to execute specific Mnesia operations other than `:mnesia.transaction`.
 
 ### Schemas
 These are the way data is represented in the application. These structs make it easy to update and interact with data, as well as providing a contract between the layers for the shape and fields of the data.
@@ -39,11 +40,11 @@ These are also where to to/from record mappings are defined.
 ## Technology Choices
 
 ### Mnesia
-  Typically for this type of application I would use Ecto + Postgres. Postgres provides a strong level of type validation for each field of a table, as well as foreign key validations and built in constraints. Ecto can handle changesets, validations, migrations, etc. 
+  Typically for this type of application I would use Ecto + Postgres. Postgres provides a strong level of type validation for each field of a table, as well as foreign key validations and built in constraints. Ecto can handle changesets, validations, migrations, etc. Ecto+Postgres also support transactions.
 
-  Choosing Ecto and Postgres would mean writing less code in this app and more reliance on the code in Ecto and Postgres, both of which are widely adopted and well tested. Ultimately in most common "Ecommerce" apps like this one, Ecto+Postgres is probably the right choice.
+  Choosing Ecto and Postgres would probably result in less code in this app and more reliance on the code in Ecto and Postgres, both of which are widely adopted and well tested. Ultimately in most common "Ecommerce" apps like this one, Ecto+Postgres is probably the right choice.
 
-  So why Mnesia? I felt that Mnesia would let me do more problem solving and less wiring up of libraries. The three tier architecture naturally emerged as I was implementing the various core functions and handling edge cases. I actually ended up gaining better appreciation for Ecto's design as I had to solve similar problems.
+  So why Mnesia? I felt that Mnesia would let me do more problem solving and less wiring up of libraries. The three tier architecture naturally emerged as I was implementing the various core functions and handling edge cases. I also ended up gaining better appreciation for Ecto's design as I had to solve similar problems.
 
 #### Pros of Mnesia
   - Built in to Erlang, no external dependencies to pull in or run
