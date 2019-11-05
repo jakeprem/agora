@@ -61,6 +61,9 @@ These are also where to to/from record mappings are defined.
 ### Nanoid
   One of my favorite libraries for generating short IDs in Elixir. In a more serious app I would probably use a full UUID library for IDs instead. Also most RDBMS would provide an integer ID by default.
 
+### Jason
+  For parsing and encoding JSON in the API
+
 ### Plug_Cowboy
   Hooks up Plug to use the Cowboy webserver. Cowboy handles concurrent connections by spawning processes and Mnesia uses transactions and has built in deadlock prevention; meaning the app should handle multiple concurrent requests pretty well.
 
