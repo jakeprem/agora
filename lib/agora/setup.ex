@@ -15,8 +15,7 @@ defmodule Agora.Setup do
   Creates `priv/db` if it doesn't exist. Creates the :mnesia schema and creates the tables.
   """
   def setup do
-    storage_path = Application.get_env(:mnesia, :dir)
-    File.mkdir_p(storage_path)
+    setup_path()
 
     create_schema_and_start()
     create_tables()
@@ -26,12 +25,13 @@ defmodule Agora.Setup do
   Create the schema if it doesn't exist and start :mnesia
   """
   def create_schema_and_start do
+    setup_path()
     current_node = node()
 
     case :mnesia.create_schema([current_node]) do
       :ok -> :mnesia.start()
       {:error, {^current_node, {:already_exists, ^current_node}}} -> :mnesia.start()
-      _ -> raise "Something unexpected happened while starting Mnesia"
+      other -> raise "Something unexpected happened while starting Mnesia (#{other})"
     end
   end
 
@@ -72,5 +72,12 @@ defmodule Agora.Setup do
       |> List.to_string()
 
     System.cmd("rm", ["-r", storage_path])
+  end
+
+  # Create the configured path.
+  # Has no effect if it already exists.
+  defp setup_path do
+    storage_path = Application.get_env(:mnesia, :dir)
+    File.mkdir_p(storage_path)
   end
 end
