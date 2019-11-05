@@ -13,7 +13,7 @@ defmodule Agora.MixProject do
       name: "Agora",
       docs: [
         main: "readme",
-        extras: ["README.md", "requirements.md", "EXTENSION_POINTS.md"]
+        extras: ["README.md", "requirements.md"]
       ]
     ]
   end
