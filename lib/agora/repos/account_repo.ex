@@ -52,7 +52,7 @@ defmodule Agora.AccountRepo do
   """
   @spec read(String.t()) :: Agora.Schemas.Account.t()
   def read(account_id) do
-    {Account, account_id}
+    {@tablename, account_id}
     |> :mnesia.read()
     |> List.first()
     |> Account.from_record()
@@ -65,6 +65,6 @@ defmodule Agora.AccountRepo do
   """
   @spec list_ids :: [String.t()]
   def list_ids do
-    :mnesia.all_keys(Account)
+    :mnesia.all_keys(@tablename)
   end
 end

@@ -56,7 +56,7 @@ defmodule Agora.Schemas.Widget do
   This should only need to be used in `Agora.WidgetRepo`
   """
   @spec from_record({Agora.Schemas.Widget, any, any, any, any, any, any}) ::
-          Agora.Schemas.Widget.t()
+          Agora.Schemas.Widget.t() | nil
   def from_record({__MODULE__, id, owner, name, description, is_for_sale, price}) do
     %__MODULE__{
       id: id,
@@ -67,4 +67,6 @@ defmodule Agora.Schemas.Widget do
       price: price
     }
   end
+
+  def from_record(nil), do: nil
 end

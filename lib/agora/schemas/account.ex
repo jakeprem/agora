@@ -52,7 +52,7 @@ defmodule Agora.Schemas.Account do
 
   This should only need to be used in `Agora.AccountRepo`
   """
-  @spec from_record({Agora.Schemas.Account, any, any, any, any}) :: Agora.Schemas.Account.t()
+  @spec from_record({Agora.Schemas.Account, any, any, any, any}) :: Agora.Schemas.Account.t() | nil
   def from_record({__MODULE__, id, first_name, last_name, balance}) do
     %__MODULE__{
       id: id,
@@ -61,4 +61,6 @@ defmodule Agora.Schemas.Account do
       balance: balance
     }
   end
+
+  def from_record(nil), do: nil
 end

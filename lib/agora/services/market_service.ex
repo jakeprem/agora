@@ -16,13 +16,15 @@ defmodule Agora.MarketService do
   Post a widget for sale
   """
   def sell_widget(seller_id, name, description, price) when is_number(price) do
-    widget = Widget.new(seller_id, name, description, true, price)
-
     :mnesia.transaction(fn ->
-      WidgetRepo.write(widget)
+      widget = Widget.new(seller_id, name, description, true, price)
+
+      with :ok <- WidgetRepo.write(widget) do
+        widget
+      end
     end)
     |> case do
-      {:atomic, :ok} -> {:ok, widget}
+      {:atomic, widget} -> {:ok, widget}
       {:aborted, reason} -> {:error, reason}
     end
   end
@@ -33,7 +35,15 @@ defmodule Agora.MarketService do
   def buy_widget(buyer_id, widget_id) do
     :mnesia.transaction(fn ->
       buyer = AccountRepo.read(buyer_id)
+      if buyer == nil do
+        :mnesia.abort("Invalid buyer")
+      end
+
       widget = WidgetRepo.read(widget_id)
+      if widget == nil do
+        :mnesia.abort("Invalid widget")
+      end
+
       seller = AccountRepo.read(widget.owner)
 
       updated_buyer = %Account{

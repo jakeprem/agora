@@ -26,9 +26,12 @@ defmodule Agora.AccountService do
   @doc """
   Add funds to an account
   """
-  def add_funds(account_id, funds_to_add) when is_number(funds_to_add) do
+  def add_funds(account_id, funds_to_add) when is_number(funds_to_add) when funds_to_add > 0 do
     :mnesia.transaction(fn ->
       account = AccountRepo.read(account_id)
+      if account == nil do
+        :mnesia.abort("Account does not exist")
+      end
 
       new_balance = account.balance + funds_to_add
       account_with_funds = %Account{account | balance: new_balance}
@@ -45,7 +48,10 @@ defmodule Agora.AccountService do
   """
   def get(id) do
     :mnesia.transaction(fn ->
-      AccountRepo.read(id)
+      case AccountRepo.read(id) do
+        nil -> :mnesia.abort("Account does not exist")
+        other -> other
+      end
     end)
     |> convert_tuples()
   end

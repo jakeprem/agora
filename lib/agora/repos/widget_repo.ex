@@ -52,7 +52,7 @@ defmodule Agora.WidgetRepo do
   """
   @spec read(String.t()) :: Agora.Schemas.Widget.t()
   def read(widget_id) do
-    {Widget, widget_id}
+    {@tablename, widget_id}
     |> :mnesia.read()
     |> List.first()
     |> Widget.from_record()
@@ -66,6 +66,16 @@ defmodule Agora.WidgetRepo do
   @spec list :: [Agora.Schemas.Widget.t()]
   def list do
     :mnesia.match_object({@tablename, :_, :_, :_, :_, :_, :_})
+    |> Enum.map(&Widget.from_record/1)
+  end
+
+  @doc """
+  Returns a list of widgets that are flagged as for sale.
+
+  Must be called from within an `:mnesia.transaction`.
+  """
+  def list_for_sale do
+    :mnesia.match_object({@tablename, :_, :_, :_, :_, true, :_})
     |> Enum.map(&Widget.from_record/1)
   end
 end

@@ -53,7 +53,7 @@ defmodule Agora.Schemas.Transaction do
   This should only need to be used in `Agora.TransactionRepo`
   """
   @spec from_record({Agora.Schemas.Transaction, any, any, any, any}) ::
-          Agora.Schemas.Transaction.t()
+          Agora.Schemas.Transaction.t() | nil
   def from_record({__MODULE__, id, buyer_id, seller_id, widget_id}) do
     %__MODULE__{
       id: id,
@@ -62,4 +62,6 @@ defmodule Agora.Schemas.Transaction do
       widget_id: widget_id
     }
   end
+
+  def from_record(nil), do: nil
 end

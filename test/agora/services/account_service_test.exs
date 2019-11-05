@@ -49,7 +49,36 @@ defmodule Agora.AccountServiceTest do
       assert initial_account.first_name == changed_account.first_name
       assert initial_account.last_name == changed_account.last_name
     end
+
+    test "cannot add funds to invalid account" do
+      assert {:error, reason} = AccountService.add_funds("invalid_id", 1_000.0)
+
+      # assert reason =~ "something"
+    end
   end
 
-  # test "User can log in to account"
+  describe "get/1" do
+    test "successfully retrieves account" do
+      {:ok, inserted_account} = AccountService.create("George", "Washington")
+
+      assert {:ok, retrieved_account} = AccountService.get(inserted_account.id)
+      assert inserted_account == retrieved_account
+    end
+
+    test "returns error when given an invalid id" do
+      assert {:error, reason} = AccountService.get("blah")
+      # assert reason =~ "something"
+    end
+  end
+
+  test "list_ids works" do
+    {:ok, %{id: id_a}} =AccountService.create("George", "Washington")
+    {:ok, %{id: id_b}} =AccountService.create("Abe", "Lincoln")
+
+    {:ok, ids} = AccountService.list_ids()
+
+    assert length(ids) == 2
+    assert Enum.member?(ids, id_a)
+    assert Enum.member?(ids, id_b)
+  end
 end

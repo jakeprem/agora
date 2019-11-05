@@ -52,9 +52,19 @@ defmodule Agora.TransactionRepo do
   """
   @spec read(String.t()) :: Agora.Schemas.Transaction.t()
   def read(transaction_id) do
-    {Transaction, transaction_id}
+    {@tablename, transaction_id}
     |> :mnesia.read()
     |> List.first()
     |> Transaction.from_record()
+  end
+
+  @doc """
+  Returns a list of ids for all accounts in the table.
+
+  Must be called from within an `:mnesia.transaction`
+  """
+  @spec list_ids :: [String.t()]
+  def list_ids do
+    :mnesia.all_keys(@tablename)
   end
 end
