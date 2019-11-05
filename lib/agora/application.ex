@@ -5,7 +5,7 @@ defmodule Agora.Application do
 
   def start(_type, _args) do
     children = [
-      {Plug.Cowboy, scheme: :http, plug: AgoraWeb.Router, options: [port: 4040]}
+      AgoraWeb.spec()
     ]
 
     start_mnesia()
