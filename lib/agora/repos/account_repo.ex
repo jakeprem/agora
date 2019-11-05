@@ -46,11 +46,11 @@ defmodule Agora.AccountRepo do
   end
 
   @doc """
-  Reads the record with the given `account_id` from the Account table.
+  Reads the record with the given `account_id` from the Account table. Returns nil if not found.
 
   Must be called from within an `:mnesia.transaction`.
   """
-  @spec read(String.t()) :: Agora.Schemas.Account.t()
+  @spec read(String.t()) :: Agora.Schemas.Account.t() | nil
   def read(account_id) do
     {@tablename, account_id}
     |> :mnesia.read()

@@ -15,9 +15,13 @@ defmodule Agora.MarketService do
   @doc """
   Post a widget for sale
   """
-  def sell_widget(seller_id, name, description, price) when is_number(price) do
+  def sell_widget(seller_id, name, description, price) when is_number(price) and price > 0 do
     :mnesia.transaction(fn ->
       widget = Widget.new(seller_id, name, description, true, price)
+
+      if AccountRepo.read(seller_id) == nil do
+        :mnesia.abort("Invalid seller")
+      end
 
       with :ok <- WidgetRepo.write(widget) do
         widget
@@ -28,6 +32,8 @@ defmodule Agora.MarketService do
       {:aborted, reason} -> {:error, reason}
     end
   end
+
+  def sell_widget(_seller_id, _name, _description, price), do: {:error, "Invalid price: #{price}"}
 
   @doc """
   Buy a widget. Will return an error if buyer doesn't have sufficient funds.
@@ -45,6 +51,9 @@ defmodule Agora.MarketService do
       end
 
       seller = AccountRepo.read(widget.owner)
+      if seller == nil do
+        :mnesia.abort("Could not retrieve seller account")
+      end
 
       updated_buyer = %Account{
         buyer
@@ -60,8 +69,15 @@ defmodule Agora.MarketService do
         | balance: seller.balance + widget.price * (1 - @platform_cut)
       }
 
+      updated_widget = %Widget{
+        widget
+        | is_for_sale: false,
+          owner: buyer.id
+      }
+
       AccountRepo.write(updated_buyer)
       AccountRepo.write(updated_seller)
+      WidgetRepo.write(updated_widget)
 
       new_transaction = Transaction.new(buyer.id, seller.id, widget.id)
 
@@ -80,7 +96,7 @@ defmodule Agora.MarketService do
   """
   def list_widgets do
     :mnesia.transaction(fn ->
-      WidgetRepo.list()
+      WidgetRepo.list_for_sale()
     end)
     |> case do
       {:atomic, widgets} -> {:ok, widgets}

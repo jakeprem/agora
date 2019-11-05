@@ -26,7 +26,7 @@ defmodule Agora.AccountService do
   @doc """
   Add funds to an account
   """
-  def add_funds(account_id, funds_to_add) when is_number(funds_to_add) when funds_to_add > 0 do
+  def add_funds(account_id, funds_to_add) when is_number(funds_to_add) and funds_to_add > 0 do
     :mnesia.transaction(fn ->
       account = AccountRepo.read(account_id)
       if account == nil do
@@ -42,6 +42,8 @@ defmodule Agora.AccountService do
     end)
     |> convert_tuples()
   end
+
+  def add_funds(_account_id, invalid_funds), do: {:error, "Invalid amount: #{invalid_funds}"}
 
   @doc """
   Retrieve an account by id
@@ -69,7 +71,7 @@ defmodule Agora.AccountService do
   defp convert_tuples(return_value) when is_tuple(return_value) do
     case return_value do
       {:atomic, val} -> {:ok, val}
-      other -> {:error, other}
+      {:aborted, reason} -> {:error, reason}
     end
   end
 end

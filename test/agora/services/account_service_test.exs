@@ -52,8 +52,12 @@ defmodule Agora.AccountServiceTest do
 
     test "cannot add funds to invalid account" do
       assert {:error, reason} = AccountService.add_funds("invalid_id", 1_000.0)
+      assert reason =~ "Account"
+    end
 
-      # assert reason =~ "something"
+    test "added funds must be a number greater than 0" do
+      assert {:error, reason} = AccountService.add_funds("unguarded_here", "dog")
+      assert reason =~ "amount"
     end
   end
 

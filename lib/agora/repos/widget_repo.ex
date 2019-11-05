@@ -46,11 +46,11 @@ defmodule Agora.WidgetRepo do
   end
 
   @doc """
-  Reads the record with the given `widget_id` from the Widget table.
+  Reads the record with the given `widget_id` from the Widget table. Returns nil if not found.
 
   Must be called from within an `:mnesia.transaction`.
   """
-  @spec read(String.t()) :: Agora.Schemas.Widget.t()
+  @spec read(String.t()) :: Agora.Schemas.Widget.t() | nil
   def read(widget_id) do
     {@tablename, widget_id}
     |> :mnesia.read()

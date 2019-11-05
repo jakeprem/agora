@@ -46,11 +46,11 @@ defmodule Agora.TransactionRepo do
   end
 
   @doc """
-  Reads the record with the given `transaction_id` from the Transaction table.
+  Reads the record with the given `transaction_id` from the Transaction table. Returns nil if the transaction is not found.
 
   Must be called from within an `:mnesia.transaction`.
   """
-  @spec read(String.t()) :: Agora.Schemas.Transaction.t()
+  @spec read(String.t()) :: Agora.Schemas.Transaction.t() | nil
   def read(transaction_id) do
     {@tablename, transaction_id}
     |> :mnesia.read()
