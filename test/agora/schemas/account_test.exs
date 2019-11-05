@@ -6,10 +6,10 @@ defmodule Agora.Schemas.AccountTest do
   describe "new/2" do
     test "Generates new Account with proper defaults" do
       assert %Account{
-        first_name: "Jake",
-        last_name: "Prem",
-        balance: 0.0,
-      } = Account.new("Jake", "Prem")
+               first_name: "Jake",
+               last_name: "Prem",
+               balance: 0.0
+             } = Account.new("Jake", "Prem")
     end
   end
 
@@ -23,12 +23,12 @@ defmodule Agora.Schemas.AccountTest do
       }
 
       assert {
-        Account,
-        schema.id,
-        schema.first_name,
-        schema.last_name,
-        schema.balance
-      } == Account.to_record(schema)
+               Account,
+               schema.id,
+               schema.first_name,
+               schema.last_name,
+               schema.balance
+             } == Account.to_record(schema)
     end
   end
 
@@ -41,13 +41,14 @@ defmodule Agora.Schemas.AccountTest do
         balance: 0.0
       }
 
-      assert schema == Account.from_record({
-        Account,
-        schema.id,
-        schema.first_name,
-        schema.last_name,
-        schema.balance
-      })
+      assert schema ==
+               Account.from_record({
+                 Account,
+                 schema.id,
+                 schema.first_name,
+                 schema.last_name,
+                 schema.balance
+               })
     end
   end
 

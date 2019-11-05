@@ -77,8 +77,6 @@ defmodule Agora.MarketServiceTest do
     end
   end
 
-
-
   describe "Show list of widgets for sale" do
     test "User can retrieve a list widgets for sale" do
       {:ok, account} = AccountService.create("Some", "Person")
@@ -92,14 +90,15 @@ defmodule Agora.MarketServiceTest do
       assert Enum.member?(widgets, widget_b)
     end
 
-
     test "Bought widgets no longer show up as for sale" do
       {:ok, seller} = AccountService.create("Jake", "Prem")
       {:ok, buyer} = AccountService.create("Dwight", "Schrute")
 
       AccountService.add_funds(buyer.id, 10_000.0)
 
-      {:ok, widget_a} = MarketService.sell_widget(seller.id, "Beets", "A truckload of beets", 900.0)
+      {:ok, widget_a} =
+        MarketService.sell_widget(seller.id, "Beets", "A truckload of beets", 900.0)
+
       {:ok, widget_b} = MarketService.sell_widget(seller.id, "Paper", "A box of paper", 9.0)
 
       assert {:ok, transaction} = MarketService.buy_widget(buyer.id, widget_a.id)

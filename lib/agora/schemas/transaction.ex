@@ -29,7 +29,6 @@ defmodule Agora.Schemas.Transaction do
     }
   end
 
-
   @doc """
   Converts a `Agora.Schemas.Transaction` to a record to be inserted into :mnesia.
 

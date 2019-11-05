@@ -24,17 +24,19 @@ defmodule Agora.AccountRepoTest do
         AccountRepo.write(new_account)
       end)
 
-      assert {:atomic, account} = :mnesia.transaction(fn ->
-        AccountRepo.read(new_account.id)
-      end)
+      assert {:atomic, account} =
+               :mnesia.transaction(fn ->
+                 AccountRepo.read(new_account.id)
+               end)
 
       assert account == new_account
     end
 
     test "read/1 returns nil when no account exists" do
-      assert {:atomic, nil} = :mnesia.transaction(fn ->
-        AccountRepo.read("does_not_exist")
-      end)
+      assert {:atomic, nil} =
+               :mnesia.transaction(fn ->
+                 AccountRepo.read("does_not_exist")
+               end)
     end
   end
 
@@ -42,14 +44,17 @@ defmodule Agora.AccountRepoTest do
     test "returns a list of the inserted ids" do
       a = Account.new("Bob", "Ross")
       b = Account.new("Frodo", "Shireson")
+
       :mnesia.transaction(fn ->
         AccountRepo.write(a)
         AccountRepo.write(b)
       end)
 
-      assert {:atomic, ids} = :mnesia.transaction(fn ->
-        AccountRepo.list_ids()
-      end)
+      assert {:atomic, ids} =
+               :mnesia.transaction(fn ->
+                 AccountRepo.list_ids()
+               end)
+
       assert Enum.member?(ids, a.id)
       assert Enum.member?(ids, b.id)
     end

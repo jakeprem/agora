@@ -76,8 +76,8 @@ defmodule Agora.AccountServiceTest do
   end
 
   test "list_ids works" do
-    {:ok, %{id: id_a}} =AccountService.create("George", "Washington")
-    {:ok, %{id: id_b}} =AccountService.create("Abe", "Lincoln")
+    {:ok, %{id: id_a}} = AccountService.create("George", "Washington")
+    {:ok, %{id: id_b}} = AccountService.create("Abe", "Lincoln")
 
     {:ok, ids} = AccountService.list_ids()
 

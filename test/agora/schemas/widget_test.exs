@@ -13,7 +13,14 @@ defmodule Agora.Schemas.WidgetTest do
         price: 10.0
       }
 
-      assert widget = Widget.new(widget.owner, widget.name, widget.description, widget.is_for_sale, widget.price)
+      assert widget =
+               Widget.new(
+                 widget.owner,
+                 widget.name,
+                 widget.description,
+                 widget.is_for_sale,
+                 widget.price
+               )
     end
   end
 
@@ -28,14 +35,14 @@ defmodule Agora.Schemas.WidgetTest do
       }
 
       assert {
-        Widget,
-        schema.id,
-        schema.owner,
-        schema.name,
-        schema.description,
-        schema.is_for_sale,
-        schema.price
-      } == Widget.to_record(schema)
+               Widget,
+               schema.id,
+               schema.owner,
+               schema.name,
+               schema.description,
+               schema.is_for_sale,
+               schema.price
+             } == Widget.to_record(schema)
     end
   end
 
@@ -49,15 +56,16 @@ defmodule Agora.Schemas.WidgetTest do
         price: 10.0
       }
 
-      assert schema == Widget.from_record({
-        Widget,
-        schema.id,
-        schema.owner,
-        schema.name,
-        schema.description,
-        schema.is_for_sale,
-        schema.price
-      })
+      assert schema ==
+               Widget.from_record({
+                 Widget,
+                 schema.id,
+                 schema.owner,
+                 schema.name,
+                 schema.description,
+                 schema.is_for_sale,
+                 schema.price
+               })
     end
   end
 

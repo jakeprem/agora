@@ -24,17 +24,19 @@ defmodule Agora.TransactionRepoTest do
         TransactionRepo.write(new_transaction)
       end)
 
-      assert {:atomic, transaction} = :mnesia.transaction(fn ->
-        TransactionRepo.read(new_transaction.id)
-      end)
+      assert {:atomic, transaction} =
+               :mnesia.transaction(fn ->
+                 TransactionRepo.read(new_transaction.id)
+               end)
 
       assert transaction == new_transaction
     end
 
     test "read/1 returns nil when transaction does not exist" do
-      assert {:atomic, nil} = :mnesia.transaction(fn ->
-        TransactionRepo.read("does_not_exist")
-      end)
+      assert {:atomic, nil} =
+               :mnesia.transaction(fn ->
+                 TransactionRepo.read("does_not_exist")
+               end)
     end
   end
 
@@ -48,9 +50,10 @@ defmodule Agora.TransactionRepoTest do
         TransactionRepo.write(b)
       end)
 
-      assert {:atomic, ids} = :mnesia.transaction(fn ->
-        TransactionRepo.list_ids()
-      end)
+      assert {:atomic, ids} =
+               :mnesia.transaction(fn ->
+                 TransactionRepo.list_ids()
+               end)
 
       assert length(ids) == 2
       assert Enum.member?(ids, a.id)

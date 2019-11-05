@@ -24,17 +24,19 @@ defmodule Agora.WidgetRepoTest do
         WidgetRepo.write(new_widget)
       end)
 
-      assert {:atomic, widget} = :mnesia.transaction(fn ->
-        WidgetRepo.read(new_widget.id)
-      end)
+      assert {:atomic, widget} =
+               :mnesia.transaction(fn ->
+                 WidgetRepo.read(new_widget.id)
+               end)
 
       assert widget == new_widget
     end
 
     test "read/1 returns nil when widget does not exist" do
-      assert {:atomic, nil} = :mnesia.transaction(fn ->
-        WidgetRepo.read("does_not_exist")
-      end)
+      assert {:atomic, nil} =
+               :mnesia.transaction(fn ->
+                 WidgetRepo.read("does_not_exist")
+               end)
     end
   end
 
@@ -48,9 +50,10 @@ defmodule Agora.WidgetRepoTest do
         WidgetRepo.write(widget_b)
       end)
 
-      assert {:atomic, widgets} = :mnesia.transaction(fn ->
-        WidgetRepo.list_for_sale()
-      end)
+      assert {:atomic, widgets} =
+               :mnesia.transaction(fn ->
+                 WidgetRepo.list_for_sale()
+               end)
 
       assert length(widgets) == 1
       assert Enum.member?(widgets, widget_a)

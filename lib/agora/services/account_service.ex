@@ -29,6 +29,7 @@ defmodule Agora.AccountService do
   def add_funds(account_id, funds_to_add) when is_number(funds_to_add) and funds_to_add > 0 do
     :mnesia.transaction(fn ->
       account = AccountRepo.read(account_id)
+
       if account == nil do
         :mnesia.abort("Account does not exist")
       end

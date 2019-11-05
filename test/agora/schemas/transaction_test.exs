@@ -11,7 +11,8 @@ defmodule Agora.Schemas.TransactionTest do
         widget_id: "widget_id"
       }
 
-      assert transaction = Transaction.new(transaction.buyer_id, transaction.seller_id, transaction.widget_id)
+      assert transaction =
+               Transaction.new(transaction.buyer_id, transaction.seller_id, transaction.widget_id)
     end
   end
 
@@ -24,12 +25,12 @@ defmodule Agora.Schemas.TransactionTest do
       }
 
       assert {
-        Transaction,
-        schema.id,
-        schema.buyer_id,
-        schema.seller_id,
-        schema.widget_id
-      } == Transaction.to_record(schema)
+               Transaction,
+               schema.id,
+               schema.buyer_id,
+               schema.seller_id,
+               schema.widget_id
+             } == Transaction.to_record(schema)
     end
   end
 
@@ -41,13 +42,14 @@ defmodule Agora.Schemas.TransactionTest do
         widget_id: "widget_id"
       }
 
-      assert schema == Transaction.from_record({
-        Transaction,
-        schema.id,
-        schema.buyer_id,
-        schema.seller_id,
-        schema.widget_id
-      })
+      assert schema ==
+               Transaction.from_record({
+                 Transaction,
+                 schema.id,
+                 schema.buyer_id,
+                 schema.seller_id,
+                 schema.widget_id
+               })
     end
   end
 
