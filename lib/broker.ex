@@ -12,9 +12,7 @@ defmodule Agora.Broker do
 
   defdelegate add_funds(account_id, amount), to: AccountService
 
-  def view_balance(_account_id) do
-    :not_implemented
-  end
+  defdelegate view_balance(account_id), to: AccountService, as: :get
 
   defdelegate buy_widget(buyer_id, widget_id), to: MarketService
 
