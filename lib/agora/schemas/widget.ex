@@ -15,6 +15,7 @@ defmodule Agora.Schemas.Widget do
   Currently used to create the Mnesia table
   """
   def attributes, do: @attributes
+  def update_channel, do: Atom.to_string(__MODULE__)
 
   @doc """
   Creates a new Widget struct. Can be persisted with `Agora.WidgetRepo`.
@@ -69,4 +70,10 @@ defmodule Agora.Schemas.Widget do
   end
 
   def from_record(nil), do: nil
+
+  def query(opts \\ []) do
+    [__MODULE__|Enum.map(@attributes, &Keyword.get(opts, &1, :_))]
+    |> List.to_tuple()
+    |> :mnesia.match_object()
+  end
 end

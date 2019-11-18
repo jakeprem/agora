@@ -1,0 +1,87 @@
+$background: #F6F9FF;
+$text-color: black;
+
+$color-table-header: #CEC9C9;
+$color-table-stripe: #F6F6F6;
+
+$color-border: #D7D9DB;
+
+$table-border: 1px solid $color-border;
+$table-padding: .5em 1.5em;
+
+body {
+  background: $background
+}
+
+.root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  color: $text-color;
+}
+
+.root__header {
+  background: lightgrey;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  margin-bottom: 1em;
+  padding: .3em 1em;
+  box-shadow: 0 0 6px rgba(20, 20, 20, 0.2);
+}
+
+.root__main {
+  flex: 1;
+  background: white;
+  box-shadow: 0 0 6px rgba(20, 20, 20, 0.2);
+  margin: 1em;
+}
+
+.audit {
+  padding: 1rem 3rem;
+}
+
+.audit__title {
+  font-size: 1.5rem;
+}
+
+.market {
+  padding: 1rem 3rem;
+}
+
+.market__title {
+  font-size: 1.5rem;
+}
+
+.mkt-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: $table-border;
+}
+
+.mkt-table__tr:nth-child(odd) {
+  background-color: $color-table-stripe;
+}
+
+.mkt-table__th {
+  padding: $table-padding;
+  border: $table-border;
+  text-align: left;
+  background: $color-table-header;
+}
+
+.mkt-table__cell {
+  padding: $table-padding;
+  border: $table-border;
+}
+
+.mkt-table__cell--break {
+  word-break: break-word;
+}
+
+table {
+  border: 1px solid black;
+}

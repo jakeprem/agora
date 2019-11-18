@@ -7,7 +7,10 @@ defmodule Agora.AccountService do
   """
 
   alias Agora.Schemas.Account
+  alias Agora.Schemas.Widget
+
   alias Agora.AccountRepo
+  alias Agora.WidgetRepo
 
   @doc """
   Create a new account in the system.
@@ -55,6 +58,18 @@ defmodule Agora.AccountService do
         nil -> :mnesia.abort("Account does not exist")
         other -> other
       end
+    end)
+    |> convert_tuples()
+  end
+
+  def get_widgets(account_id) do
+    :mnesia.transaction(fn ->
+      account = AccountRepo.read(account_id)
+      if account == nil do
+        :mnesia.abort("Account does not exist")
+      end
+
+      WidgetRepo.list_for_owner(account_id)
     end)
     |> convert_tuples()
   end

@@ -5,7 +5,8 @@ defmodule Agora.Application do
 
   def start(_type, _args) do
     children = [
-      AgoraWeb.spec()
+      AgoraWeb.Endpoint,
+      AgoraWeb.UpdateBrodcaster,
     ]
 
     start_mnesia()

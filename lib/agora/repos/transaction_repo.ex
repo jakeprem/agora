@@ -33,6 +33,10 @@ defmodule Agora.TransactionRepo do
     end
   end
 
+  def subscribe do
+    :mnesia.subscribe({:table, @tablename, :simple})
+  end
+
   @doc """
   Writes the given record to the Transaction table.
 

@@ -33,6 +33,10 @@ defmodule Agora.WidgetRepo do
     end
   end
 
+  def subscribe do
+    :mnesia.subscribe({:table, @tablename, :simple})
+  end
+
   @doc """
   Writes the given record to the Widget table.
 
@@ -65,7 +69,12 @@ defmodule Agora.WidgetRepo do
   """
   @spec list :: [Agora.Schemas.Widget.t()]
   def list do
-    :mnesia.match_object({@tablename, :_, :_, :_, :_, :_, :_})
+    Widget.query()
+    |> Enum.map(&Widget.from_record/1)
+  end
+
+  def list_for_owner(id) do
+    Widget.query(owner: id)
     |> Enum.map(&Widget.from_record/1)
   end
 
@@ -75,7 +84,7 @@ defmodule Agora.WidgetRepo do
   Must be called from within an `:mnesia.transaction`.
   """
   def list_for_sale do
-    :mnesia.match_object({@tablename, :_, :_, :_, :_, true, :_})
+    Widget.query(is_for_sale: true)
     |> Enum.map(&Widget.from_record/1)
   end
 end

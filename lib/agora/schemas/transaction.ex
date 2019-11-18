@@ -15,6 +15,7 @@ defmodule Agora.Schemas.Transaction do
   Currently used to create the Mnesia table
   """
   def attributes, do: @attributes
+  def update_channel, do: Atom.to_string(__MODULE__)
 
   @doc """
   Creates a new Transaction struct. Can be persisted with `Agora.TransactionRepo`.

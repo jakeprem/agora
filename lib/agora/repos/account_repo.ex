@@ -33,6 +33,10 @@ defmodule Agora.AccountRepo do
     end
   end
 
+  def subscribe do
+    :mnesia.subscribe({:table, @tablename, :simple})
+  end
+
   @doc """
   Writes the given record to the Account table.
 

@@ -27,3 +27,5 @@ priv/db
 .elixir_ls
 
 .mix_tasks
+
+node_modules
